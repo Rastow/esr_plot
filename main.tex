@@ -1,0 +1,131 @@
+\documentclass[crop]{standalone}
+
+% main font
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+
+% math font
+\usepackage{amsmath}
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+\unimathsetup{
+    math-style=ISO,
+	bold-style=ISO,
+	sans-style=italic,
+	nabla=upright,
+	partial=upright,
+}
+
+% units
+\usepackage{siunitx}
+\sisetup{
+    unit-font-command=\symup,
+    locale=DE,
+}
+\DeclareSIUnit{\arbitraryunit}{arb.~u.}
+
+% chemistry
+%redefine chemgreek_text to use upright math alphabet instead
+\usepackage{chemmacros}
+\chemsetup{
+    greek=fontspec,
+}
+\ExplSyntaxOn
+\cs_set_protected:Nn \chemgreek_text:n
+    {\ensuremath{\symup{#1}}}
+\ExplSyntaxOff
+
+% pictures
+\usepackage{tikz}
+
+% plots & global settings
+\usepackage{pgfplots}
+\pgfplotsset{
+    compat=1.18,
+    ylabel=$I$ / \unit{\arbitraryunit},
+    legend style={
+        legend pos=north east,
+        legend cell align=left,
+        legend columns=1,
+        name=legend,
+    },
+    xmin=332,
+    xmax=338,
+    enlarge x limits=false,
+    enlarge y limits=0.05,
+    tick pos=lower,
+    tick align=outside,
+    extra tick style={
+        grid=major,
+        major grid style=dashed,
+        ticks=none,
+    },
+    cycle list name=color list,
+    clip marker paths=true,
+    clip limits=true,
+}
+
+% define some line styles
+\pgfplotsset{
+    spectrum/.style={
+        thick,
+        no marks,
+        line join=round,
+    },
+}
+
+% number format
+%german locale
+\pgfkeys{
+    /pgf/number format/.cd,
+    read comma as period,
+    set decimal separator={{{,}}},
+    set thousands separator={\,},
+}
+
+% macros
+\NewDocumentCommand{\indicator}{o m}{
+    \draw[semithick,dashed,#1] (axis cs:#2,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:#2,\pgfkeysvalueof{/pgfplots/ymax});
+}
+\NewDocumentCommand{\range}{o O{0.9} m m m}{
+    \draw[thick,<->,#1] (#3,0|-{rel axis cs:0,#2}) -- (#4,0|-{rel axis cs:0,#2}) node[pos=0.5,anchor=south]{#5};
+}
+\NewDocumentCommand{\verticalnode}{o O{north east} O{1} m m}{
+    \draw[semithick,dashed,#1] (axis cs:#4,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:#4,\pgfkeysvalueof{/pgfplots/ymax}) node[sloped,anchor=#2,pos=#3]{#5};
+}
+\NewDocumentCommand{\horizontalnode}{o O{0.95} O{right} m m}{
+    \draw[semithick,dashed,#1] (axis cs:#4,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:#4,\pgfkeysvalueof{/pgfplots/ymax}) node[pos=#2,#3]{#5};
+}
+
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[
+    scale only axis,
+    width=12cm,
+    height=8cm,
+    xlabel=$B$ / \unit{\milli\tesla},
+    %xlabel=$f$ / \unit{\giga\hertz},
+    %x dir=reverse,
+    max space between ticks=40,
+    minor x tick num=4,
+    extra y ticks={0},
+    cycle list name=color list,
+    extra description/.code={
+        \node[left=0.03,anchor=north east] at (legend.north west) {
+            \shortstack[l]{
+                \textbf{TEMPO}
+            }
+        };
+    },
+]
+
+\pgfplotsinvokeforeach{a,b,c,d,e,f,g}{
+    \addplot+ [spectrum] table [x=mag, y=#1, col sep=tab]{esr_daten-5.txt};
+}
+
+\legend{A,B,C,D,E,F,G}
+
+\end{axis}
+\end{tikzpicture}
+\end{document}
