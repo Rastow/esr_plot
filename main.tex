@@ -42,14 +42,14 @@
 
 % chemistry
 %redefine chemgreek_text to use upright math alphabet instead
-%\usepackage{chemmacros}
-%\chemsetup{
-%    greek=fontspec,
-%}
-%\ExplSyntaxOn
-%\cs_%set_protected:Nn \chemgreek_text:n
-%    {\ensuremath{\symup{#1}}}
-%\ExplSyntaxOff
+\usepackage{chemmacros}
+\chemsetup{
+    greek=fontspec,
+}
+\ExplSyntaxOn
+\cs_set_protected:Nn \chemgreek_text:n
+    {\ensuremath{\symup{#1}}}
+\ExplSyntaxOff
 
 % pictures
 \usepackage{tikz}
@@ -118,13 +118,13 @@
     scale only axis,
     width=12cm,
     height=8cm,
-    %xlabel=$B$ / \unit{\milli\tesla},
-    %xmin=332,
-    %xmax=339,
-    xlabel=$f$ / \unit{\giga\hertz},
-    x dir=reverse,
-    xmin=9.338,
-    xmax=9.535,
+    xlabel=$B$ / \unit{\milli\tesla},
+    xmin=332,
+    xmax=339,
+    %xlabel=$f$ / \unit{\giga\hertz},
+    %x dir=reverse,
+    %xmin=9.338,
+    %xmax=9.535,
     max space between ticks=40,
     minor x tick num=4,
     extra y ticks={0},
@@ -138,11 +138,11 @@
     },
 ]
 
-\pgfplotsinvokeforeach{f,g,h,i,k}{
+\pgfplotsinvokeforeach{a,b,c,d,e,f,g,h,i,k}{
     \addplot+ [spectrum] table [x=xf#1, y=#1, col sep=tab]{data/esr_daten-5.txt};
 }
 
-\legend{F,G,H,I,K}
+\legend{A,B,C,D,E,F,G,H,I,K}
 
 \end{axis}
 \end{tikzpicture}
